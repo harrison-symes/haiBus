@@ -10,6 +10,6 @@ server.use(cors('*'))
 server.use(bodyParser.json())
 server.use(express.static(path.join(__dirname, '../public')))
 
-server.use('/api/auth', require('./routes/auth'))
+server.use('/api/bus', require('./routes/bus'))
 
 module.exports = server

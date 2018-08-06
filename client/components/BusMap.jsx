@@ -1,9 +1,11 @@
 import React from 'react'
 import {connect} from 'react-redux'
 
+import {getBusses} from '../actions/bus'
+
 const defaultCenter = {
-  lat: -45.8764,
-  lng: 170.5036
+  lat: -41.300637,
+  lng: 174.801782
 }
 
 class Map extends React.Component {
@@ -14,16 +16,14 @@ class Map extends React.Component {
         width: '50vw'
     }
   }
-
   componentDidMount () {
     this.loadMap(defaultCenter)
   }
-
   loadMap (center) {
     console.log({center});
     this.map = new google.maps.Map(this.refs.map, {
       center,
-      zoom: 17
+      zoom: 16
     })
     console.log(this.map);
     this.marker = new google.maps.Marker({
@@ -43,8 +43,13 @@ class BusMap extends React.Component {
   constructor(props) {
     super(props)
   }
+  componentDidMount() {
+    this.props.dispatch(getBusses(14))
+    this.props.dispatch(getBusses(35))
+    this.props.dispatch(getBusses(2))
+  }
   render() {
-
+    console.log(this.props.busses);
     return <div className="container">
       Bus Map Here
       <div className="columns column is-6 is-offset-3">
@@ -55,4 +60,6 @@ class BusMap extends React.Component {
   }
 }
 
-export default connect()(BusMap)
+const mapStateToProps = ({busses}) => ({busses})
+
+export default connect(mapStateToProps)(BusMap)
