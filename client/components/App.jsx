@@ -6,16 +6,10 @@ import BusMap from './BusMap'
 
 const App = ({auth}) => (
   <Router>
-    <div className="container has-text-centered">
-      <div className="hero is-small is-primary">
-        <div className="hero-body has-text-centered">
-          <Link to='/' className="">
-            <h1 className="title is-1">Sock-Off</h1>
-          </Link>
-          <BusMap />
-        </div>
-      </div>
-    </div>
+    <React.Fragment>
+        <h1 className="title is-1 has-text-centered">Hai-Bus</h1>
+      <BusMap />
+    </React.Fragment>
   </Router>
 )
 
