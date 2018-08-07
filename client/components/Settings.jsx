@@ -35,7 +35,7 @@ class Settings extends React.Component {
     return <div className="container has-text-centered">
       <div classNames="">
         <div className="column is-4">
-          {services.map(service => <span className="tag" onClick={() => removeService(service)}>
+          {services.map(service => <span className="tag is-large" onClick={() => removeService(service)}>
             {service}
           </span>)}
         </div>
@@ -43,11 +43,13 @@ class Settings extends React.Component {
           <button className="button" onClick={() => flipDirection()}>{isInbound ? 'InBound' : 'Outbound'}</button>
         </div>
         <form className="column is-4" onSubmit={this.submitService}>
-          <select name="newService" onChange={this.updateDetails} selected={this.state.newService}>
-            <option value={null}>Select a service to track</option>
-            {availServices.map(service => <option disabled={services.find(other => service == other)} value={service}>{service}</option>)}
-          </select>
-          <input type="submit" value="Add" />
+          <div className="select">
+            <select name="newService" onChange={this.updateDetails} selected={this.state.newService}>
+              <option value={null}>Select a service to track</option>
+              {availServices.map(service => <option disabled={services.find(other => service == other)} value={service}>{service}</option>)}
+            </select>
+          </div>
+          <input className="button" type="submit" value="Add" />
         </form>
       </div>
     </div>
