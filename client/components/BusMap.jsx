@@ -20,9 +20,8 @@ class BusMap extends React.Component {
     this.interval = null
   }
   getServices() {
-    this.props.dispatch(getBusses(14))
-    this.props.dispatch(getBusses(35))
-    this.props.dispatch(getBusses(2))
+    const {dispatch, services} = this.props
+    services.map(service => dispatch(getBusses(service)))
   }
   componentDidMount() {
     this.getServices()
@@ -30,7 +29,10 @@ class BusMap extends React.Component {
     this.interval = window.setInterval(() => this.getServices(), 10000)
   }
   componentWillReceiveProps(nextProps) {
-    this.loadMarkers(defaultCenter)
+    if (this.props.services.length != nextProps.services.length) {
+      this.getServices()
+    }
+    this.loadMarkers(nextProps)
   }
   loadMap (center) {
     console.log({center});
@@ -45,14 +47,16 @@ class BusMap extends React.Component {
     })
     this.loadMarkers()
   }
-  loadMarkers() {
-    const {busses} = this.props
+  loadMarkers(props) {
+    const {busses, isInbound} = props || this.props
     this.markers.forEach(marker => {
       marker.setMap(null)
       marker.setVisible(false)
     })
     this.markers = Object.keys(busses).reduce((acc, key) => {
-      const markers = busses[key].map(bus => {
+      const markers = busses[key]
+      .filter(bus => bus.Direction == (isInbound ? 'Inbound' : 'Outbound'))
+      .map(bus => {
         console.log({bus});
         return new google.maps.Marker({
           position: {
@@ -78,11 +82,10 @@ class BusMap extends React.Component {
     const {width, height} = this.state
     return <div className="">
       <div style={{height, width, margin: 'auto'}} ref="map" >I should be a map!</div>
-
     </div>
   }
 }
 
-const mapStateToProps = ({busses}) => ({busses})
+const mapStateToProps = ({busses, isInbound, services}) => ({busses, isInbound, services})
 
 export default connect(mapStateToProps)(BusMap)
