@@ -82,6 +82,9 @@ class BusMap extends React.Component {
           lat: Number(stop.lat),
           lng: Number(stop.lng)
         }}
+        style={{
+          cursor:'pointer'
+        }}
         title={stop.stopNumber}
         name={stop.stopNumber}
         onClick={() => this.stopClicked(stop)}

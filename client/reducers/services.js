@@ -6,6 +6,7 @@ export default function (state = init, action) {
   let newState = [...state]
   switch(action.type) {
     case 'ADD_SERVICE':
+      if (isNaN(action.service)) return state
       newState.push(action.service)
       set('services', JSON.stringify(newState))
       return newState

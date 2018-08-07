@@ -12,15 +12,22 @@ class StopModal extends React.Component {
       RTI: null,
       showAll: false
     }
+    this.interval = null
   }
   toggleShowAll() {
     this.setState({showAll: !this.state.showAll})
   }
-  componentDidMount() {
+  getData() {
     getRTI(this.props.stop.stopNumber, (err, data) => {
       console.log({data});
       this.setState({RTI: data})
     })
+  }
+  componentDidMount() {
+    this.interval = setInterval(() => this.getData(), 10000)
+  }
+  componentWillUnmount() {
+    window.clearInterval(this.interval)
   }
   realTimeTable() {
     const {RTI, showAll} = this.state
@@ -30,17 +37,17 @@ class StopModal extends React.Component {
       <thead className="thead">
         <tr>
           <th>Bus No.</th>
-          <th>Destination</th>
-          <th>Status</th>
           <th>Due</th>
+          <th>Journey</th>
+          <th>Status</th>
         </tr>
       </thead>
       <tbody className="tbody">
         {Services.map(service => <tr>
-          <td>{service.ServiceID}</td>
-          <td>{service.DestinationStopName}</td>
-          <td>{service.DepartureStatus}</td>
+          <td style={{color: service.IsRealtime ? 'green' : 'black'}}>{service.ServiceID}</td>
           <td>{moment(service.ExpectedDeparture || service.DisplayDeparture).fromNow()}</td>
+          <td>{service.OriginStopName} - {service.DestinationStopName}</td>
+          <td>{service.DepartureStatus}</td>
         </tr>)}
       </tbody>
     </table>
