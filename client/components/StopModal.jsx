@@ -18,7 +18,7 @@ class StopModal extends React.Component {
     this.setState({showAll: !this.state.showAll})
   }
   getData() {
-    getRTI(this.props.stop.stopNumber, (err, data) => {
+    getRTI(this.props.selectedStop, (err, data) => {
       console.log({data});
       this.setState({RTI: data})
     })
@@ -53,17 +53,20 @@ class StopModal extends React.Component {
     </table>
   }
   render() {
-    const {stop, close} = this.props
+    const {selectedStop, close, savedStops, dispatch} = this.props
     const {RTI, showAll} = this.state
     return <div className="modal is-active">
       <div className="modal-background"></div>
       <div className="modal-card">
         <header className="modal-card-head">
-          <p className="modal-card-title">RTI for {stop.stopNumber} - {RTI && RTI.Stop.Name}</p>
+          <p className="modal-card-title">RTI for {selectedStop} - {RTI && RTI.Stop.Name}</p>
           <button onClick={this.toggleShowAll.bind(this)}>{showAll ? 'Showing All' : 'Showing Tracked'}</button>
           <button className="button" onClick={close} className="delete" aria-label="close"></button>
         </header>
         <section className="modal-card-body">
+          <img className="image has-text-centered" src={`https://www.metlink.org.nz/assets/StopImages/${selectedStop}.jpg`} />
+          <button onClick={() => dispatch({type: 'SAVE_STOP', stop: selectedStop})} className="button">{savedStops.find(stop => selectedStop == stop) ? 'Un' : ''}Save</button>
+          {RTI && RTI.Notices.map(notice => <h1 className="subtitle has-text-danger is-6">{notice.LineNote}</h1>)}
           {RTI
             ? this.realTimeTable()
             : <h1 className="title is-1">Loading...</h1>
@@ -77,6 +80,6 @@ class StopModal extends React.Component {
   }
 }
 
-const mapStateToProps = ({services}) => ({services})
+const mapStateToProps = ({services, selectedStop, savedStops}) => ({services, selectedStop, savedStops})
 
 export default connect(mapStateToProps)(StopModal)

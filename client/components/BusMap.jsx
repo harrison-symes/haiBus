@@ -18,8 +18,7 @@ class BusMap extends React.Component {
     super(props)
     this.state = {
         height: '80vh',
-        width: '80vw',
-        selectedStop: null
+        width: '80vw'
     }
     this.markers = []
     this.home = []
@@ -69,10 +68,14 @@ class BusMap extends React.Component {
     console.log({clickEvent, mapProps});
   }
   stopClicked(stop) {
-    this.setState({selectedStop: stop})
+    this.props.dispatch({
+      type: 'SELECT_STOP',
+      stop: stop
+    })
+    // this.setState({selectedStop: stop})
   }
   stopMarkers(props) {
-    const {isInbound, stops} = props || this.props
+    const {isInbound, stops, selectedStop} = props || this.props
     console.log({stops});
     const rStops =  Object.keys(stops).reduce((acc, key) => {
       const markers = stops[key][isInbound ? 'IN' : 'OUT']
@@ -87,7 +90,7 @@ class BusMap extends React.Component {
         }}
         title={stop.stopNumber}
         name={stop.stopNumber}
-        onClick={() => this.stopClicked(stop)}
+        onClick={() => this.stopClicked(stop.stopNumber)}
         icon={{
           url: `/images/${key}.png`,
           scaledSize: new google.maps.Size(14, 14)
@@ -100,8 +103,9 @@ class BusMap extends React.Component {
     console.log({rStops});
   }
   render() {
-    console.log(this.props.busses);
-    const {width, height, selectedStop} = this.state
+    const {width, height} = this.state
+    const {selectedStop} = this.props
+    console.log({selectedStop});
     return <div>
       <Map google={window.google}
         style={{height: '80%', width: '100%', margin: 'none', left: 0, position: 'absolute'}}
@@ -116,7 +120,7 @@ class BusMap extends React.Component {
           {this.busMarkers()}
           {this.stopMarkers()}
         </Map>
-        {selectedStop && <StopModal stop={selectedStop} close={() => this.stopClicked(null)}/>}
+        {selectedStop && <StopModal close={() => this.stopClicked(null)}/>}
     </div>
   }
 }
@@ -125,12 +129,14 @@ const mapStateToProps = ({
   busses,
   isInbound,
   services,
-  stops
+  stops,
+  selectedStop
 }) => ({
   busses,
   isInbound,
   services,
-  stops
+  stops,
+  selectedStop
 })
 
 export default connect(mapStateToProps)(BusMap)

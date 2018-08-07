@@ -29,20 +29,22 @@ class Settings extends React.Component {
       [e.target.name]: e.target.value
     })
   }
-
   render() {
-    const {isInbound, flipDirection, removeService, services} = this.props
-    return <div className="container has-text-centered">
-      <div className="">
-        <div className="column is-4">
+    const {isInbound, flipDirection, removeService, services, savedStops, viewStop} = this.props
+    return <div className=" has-text-centered">
+      <div className="columns">
+        <div className="column">
           {services.map(service => <span className="tag is-large" onClick={() => removeService(service)}>
             {service}
           </span>)}
         </div>
-        <div className="column is-4">
+        <div clasName="column">
+          {savedStops.map(stop => <span className="tag is-large" onClick={() => viewStop(stop)}>{stop}</span>)}
+        </div>
+        <div className="column">
           <button className="button" onClick={() => flipDirection()}>{isInbound ? 'InBound' : 'Outbound'}</button>
         </div>
-        <form className="column is-4" onSubmit={this.submitService}>
+        <form className="column" onSubmit={this.submitService}>
           <div className="select">
             <select name="newService" onChange={this.updateDetails} selected={this.state.newService}>
               <option value={null}>Select a service to track</option>
@@ -67,9 +69,13 @@ const mapDispatchToProps = dispatch => ({
   removeService: service => dispatch({
     type: 'REMOVE_SERVICE',
     service
+  }),
+  viewStop: stop => dispatch({
+    type: 'SELECT_STOP',
+    stop
   })
 })
 
-const mapStateToProps = ({isInbound, services}) => ({isInbound, services})
+const mapStateToProps = ({isInbound, services, savedStops}) => ({isInbound, services, savedStops})
 
 export default connect(mapStateToProps, mapDispatchToProps)(Settings)
