@@ -1,6 +1,9 @@
 import React from 'react'
 import {connect} from 'react-redux'
 
+import {Map, Marker} from 'google-maps-react';
+import {GoogleApiWrapper} from 'google-maps-react';
+
 import {getBusses, getStops} from '../actions/bus'
 
 const defaultCenter = {
@@ -29,7 +32,7 @@ class BusMap extends React.Component {
   }
   componentDidMount() {
     this.getServices()
-    this.loadMap(defaultCenter)
+    // this.loadMap(defaultCenter)
     this.interval = window.setInterval(() => this.getServices(), 10000)
   }
   componentWillReceiveProps(nextProps) {
@@ -37,85 +40,70 @@ class BusMap extends React.Component {
       this.getServices()
     }
     // if (Object.keys(this.props.stops).length != Object.keys(nextProps.stops).length) this.getServices()
-    this.loadMarkers(nextProps)
+    // this.loadMarkers(nextProps)
   }
   busMarkers(props) {
     const {busses, isInbound} = props || this.props
-    this.markers.forEach(marker => {
-      marker.setMap(null)
-      marker.setVisible(false)
-    })
-    this.markers = Object.keys(busses).reduce((acc, key) => {
+    return Object.keys(busses).reduce((acc, key) => {
       const markers = busses[key]
       .filter(bus => bus.Direction == (isInbound ? 'Inbound' : 'Outbound'))
-      .map(bus => {
-        return new google.maps.Marker({
-          position: {
-            lat: Number(bus.Lat),
-            lng: Number(bus.Long)
-          },
-          map: this.map,
-          icon: {
-            url: `/images/${key}.png`,
-            scaledSize: new google.maps.Size(30, 30)
-          },
-        })
-      })
+      .map(bus => <Marker
+        title={"BUS"}
+        name={bus}
+        position={{
+          lat: Number(bus.Lat),
+          lng: Number(bus.Long)
+        }}
+        icon={{
+          url: `/images/${key}.png`,
+          scaledSize: new google.maps.Size(30, 30)
+        }}>
+      </Marker>)
       return acc.concat(markers)
     }, [])
+  }
+  mapClick(mapProps, map, clickEvent) {
+    console.log({clickEvent, mapProps});
   }
   stopMarkers(props) {
     const {isInbound, stops} = props || this.props
     console.log({stops});
-    this.stops.forEach(marker => {
-      marker.setMap(null)
-      marker.setVisible(false)
-    })
-    this.stops = Object.keys(stops).reduce((acc, key) => {
+    const rStops =  Object.keys(stops).reduce((acc, key) => {
       const markers = stops[key][isInbound ? 'IN' : 'OUT']
-      .map(stop => {
-        console.log({stop});
-        return new google.maps.Marker({
-          position: {
-            lat: Number(stop.lat),
-            lng: Number(stop.lng)
-          },
-          title: stop.stopNumber,
-          onclick: () => console.log("hello"),
-          icon: {
-            url: `/images/${key}.png`,
-            scaledSize: new google.maps.Size(10, 10)
-          },
-          map: this.map
-        })
-      })
+      .map(stop => <Marker
+        title={"BUS"}
+        position={{
+          lat: Number(stop.lat),
+          lng: Number(stop.lng)
+        }}
+        title={stop.stopNumber}
+        name={stop.stopNumber}
+        icon={{
+          url: `/images/${key}.png`,
+          scaledSize: new google.maps.Size(10, 10)
+        }}
+      >
+      </Marker>)
       return acc.concat(markers)
     }, [])
-  }
-  loadMap (center) {
-    console.log({center});
-    this.map = new google.maps.Map(this.refs.map, {
-      center,
-      zoom: 14
-    })
-    console.log(this.map);
-    this.home = new google.maps.Marker({
-      position: center,
-      map: this.map
-    })
-    this.loadMarkers()
-  }
-  loadMarkers(props) {
-    const {busses, isInbound} = props || this.props
-    this.busMarkers(props)
-    this.stopMarkers(props)
+    console.log({rStops});
   }
   render() {
     console.log(this.props.busses);
     const {width, height} = this.state
-    return <div className="">
-      <div style={{height, width, margin: 'auto'}} ref="map" >I should be a map!</div>
-    </div>
+    return <Map google={window.google}
+      style={{height: '100%', width: '100%', margin: 'none', left: 0, position: 'absolute'}}
+      zoom={17}
+      initialCenter={{
+          lat: -41.300637,
+          lng: 174.801782
+      }}
+      centerAroundCurrentLocation={false}
+      onClick={this.mapClick.bind(this)}
+      >
+        {/* {this.busMarkers()} */}
+        {this.stopMarkers()}
+    </Map>
   }
 }
 
