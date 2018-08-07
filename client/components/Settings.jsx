@@ -33,7 +33,7 @@ class Settings extends React.Component {
   render() {
     const {isInbound, flipDirection, removeService, services} = this.props
     return <div className="container has-text-centered">
-      <div classNames="">
+      <div className="">
         <div className="column is-4">
           {services.map(service => <span className="tag is-large" onClick={() => removeService(service)}>
             {service}
