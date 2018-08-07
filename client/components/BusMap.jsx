@@ -6,6 +6,8 @@ import {GoogleApiWrapper} from 'google-maps-react';
 
 import {getBusses, getStops} from '../actions/bus'
 
+import StopModal from './StopModal'
+
 const defaultCenter = {
   lat: -41.300637,
   lng: 174.801782
@@ -67,7 +69,7 @@ class BusMap extends React.Component {
     console.log({clickEvent, mapProps});
   }
   stopClicked(stop) {
-    console.log(stop.stopNumber);
+    this.setState({selectedStop: stop})
   }
   stopMarkers(props) {
     const {isInbound, stops} = props || this.props
@@ -96,21 +98,22 @@ class BusMap extends React.Component {
   }
   render() {
     console.log(this.props.busses);
-    const {width, height} = this.state
+    const {width, height, selectedStop} = this.state
     return <div>
       <Map google={window.google}
-        style={{height: '100%', width: '100%', margin: 'none', left: 0, position: 'absolute'}}
+        style={{height: '80%', width: '100%', margin: 'none', left: 0, position: 'absolute'}}
         zoom={17}
         initialCenter={{
           lat: -41.300637,
           lng: 174.801782
         }}
+        styles={{}}
         centerAroundCurrentLocation={false}
-        onClick={this.mapClick.bind(this)}
         >
-          {/* {this.busMarkers()} */}
+          {this.busMarkers()}
           {this.stopMarkers()}
         </Map>
+        {selectedStop && <StopModal stop={selectedStop} close={() => this.stopClicked(null)}/>}
     </div>
   }
 }

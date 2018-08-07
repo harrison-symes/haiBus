@@ -39,3 +39,11 @@ export function getStops (service) {
       .catch(err => console.log(err))
   }
 }
+
+export function getRTI (stopNumber, cb) {
+  request
+    .get('/api/bus/stops/' + stopNumber)
+    .then(res => {
+      cb(null, res.body)
+    })
+}

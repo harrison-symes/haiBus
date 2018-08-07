@@ -28,4 +28,12 @@ router.get('/:service/stops', (req, res) => {
   })
 })
 
+router.get('/stops/:stopNumber', (req, res) => {
+  request
+    .get('https://www.metlink.org.nz/api/v1/StopDepartures/' + req.params.stopNumber)
+    .then(data => {
+      res.json(data.body)
+    })
+})
+
 module.exports = router
