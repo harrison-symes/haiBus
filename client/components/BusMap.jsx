@@ -16,7 +16,8 @@ class BusMap extends React.Component {
     super(props)
     this.state = {
         height: '80vh',
-        width: '80vw'
+        width: '80vw',
+        selectedStop: null
     }
     this.markers = []
     this.home = []
@@ -65,6 +66,9 @@ class BusMap extends React.Component {
   mapClick(mapProps, map, clickEvent) {
     console.log({clickEvent, mapProps});
   }
+  stopClicked(stop) {
+    console.log(stop.stopNumber);
+  }
   stopMarkers(props) {
     const {isInbound, stops} = props || this.props
     console.log({stops});
@@ -78,32 +82,36 @@ class BusMap extends React.Component {
         }}
         title={stop.stopNumber}
         name={stop.stopNumber}
+        onClick={() => this.stopClicked(stop)}
         icon={{
           url: `/images/${key}.png`,
-          scaledSize: new google.maps.Size(10, 10)
+          scaledSize: new google.maps.Size(14, 14)
         }}
       >
       </Marker>)
       return acc.concat(markers)
     }, [])
+    return rStops
     console.log({rStops});
   }
   render() {
     console.log(this.props.busses);
     const {width, height} = this.state
-    return <Map google={window.google}
-      style={{height: '100%', width: '100%', margin: 'none', left: 0, position: 'absolute'}}
-      zoom={17}
-      initialCenter={{
+    return <div>
+      <Map google={window.google}
+        style={{height: '100%', width: '100%', margin: 'none', left: 0, position: 'absolute'}}
+        zoom={17}
+        initialCenter={{
           lat: -41.300637,
           lng: 174.801782
-      }}
-      centerAroundCurrentLocation={false}
-      onClick={this.mapClick.bind(this)}
-      >
-        {/* {this.busMarkers()} */}
-        {this.stopMarkers()}
-    </Map>
+        }}
+        centerAroundCurrentLocation={false}
+        onClick={this.mapClick.bind(this)}
+        >
+          {/* {this.busMarkers()} */}
+          {this.stopMarkers()}
+        </Map>
+    </div>
   }
 }
 
